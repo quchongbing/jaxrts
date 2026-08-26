@@ -1,0 +1,43 @@
+jaxrts.models.CHSIonFeat
+========================
+
+.. currentmodule:: jaxrts.models
+
+.. autoclass:: CHSIonFeat
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      ~CHSIonFeat.Rayleigh_weight
+      ~CHSIonFeat.S_ii
+      ~CHSIonFeat.S_ii_on_grid
+      ~CHSIonFeat.__init__
+      ~CHSIonFeat.check
+      ~CHSIonFeat.check_supports_S_ii_grid
+      ~CHSIonFeat.citation
+      ~CHSIonFeat.evaluate
+      ~CHSIonFeat.prepare
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree: 
+   
+      ~CHSIonFeat.allowed_keys
+      ~CHSIonFeat.cite_keys
+      ~CHSIonFeat.supports_S_ii_grid
+   
+   
+
+   .. _sphx_glr_backref_jaxrts.models.CHSIonFeat:
+
+   .. minigallery:: jaxrts.models.CHSIonFeat
+       :add-heading:

@@ -1,0 +1,41 @@
+jaxrts.experimental.SiiNN
+=========================
+
+.. automodule:: jaxrts.experimental.SiiNN
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :recursive:
+   
+      set_sharding
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :recursive:
+   
+      NNModel
+      NNModelExpandedZ
+      NNSiiModel
+   
+   
+
+   
+   
+   
+
+
+

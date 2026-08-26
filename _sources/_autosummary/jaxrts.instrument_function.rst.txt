@@ -1,0 +1,48 @@
+jaxrts.instrument\_function
+===========================
+
+.. automodule:: jaxrts.instrument_function
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :recursive:
+   
+      instrument_from_file
+      instrument_gaussian
+      instrument_lorentzian
+      instrument_supergaussian
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :recursive:
+   
+      FromArray
+      FromCallable
+      Gaussian
+      InstrumentFunction
+      Lorentzian
+      SuperGaussian
+      TwinGaussian
+   
+   
+
+   
+   
+   
+
+
+

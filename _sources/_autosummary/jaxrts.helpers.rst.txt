@@ -1,0 +1,58 @@
+jaxrts.helpers
+==============
+
+.. automodule:: jaxrts.helpers
+
+   
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+      :toctree:
+      :recursive:
+   
+      orbital_map
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :recursive:
+   
+      bisection
+      cramer_solve
+      download_from_nist
+      get_cache_dir
+      invert_dict
+      mass_density_from_electron_density
+      mass_from_number_fraction
+      orbital_array
+      partialclass
+      read_nist_file
+      secant_extrema_finding
+      timer
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :recursive:
+   
+      JittableDict
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jaxrts.experimental.SiiNN &mdash; jaxrts  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=cf11be94" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            jaxrts
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gen_examples/index.html">Example gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development.html">Development and Poetry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_overview.html">The <code class="docutils literal notranslate"><span class="pre">jaxrts</span></code> module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jaxrts/jaxrts">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://doi.org/10.1016/j.cpc.2026.110173">The Paper</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">jaxrts</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">jaxrts.experimental.SiiNN</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for jaxrts.experimental.SiiNN</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Interpolate the Static structure factors by a neural network. In this file, we</span>
+<span class="sd">define the NN layout, and also create a :py:class:`jaxrts.Model` which allows</span>
+<span class="sd">for easily using a trained NN with jaxrts.</span>
+
+<span class="sd">Models have to be trained, for each sample type, separately. Tools for doing so</span>
+<span class="sd">are provided in the `tools/SiiInterpolation/` directory of the jaxrts</span>
+<span class="sd">repository. The trained network is saved as an :py:mod:`orbax` checkpoint (with</span>
+<span class="sd">slight additions to save properties of the net architecture).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">orbax.checkpoint</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ocp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flax</span><span class="w"> </span><span class="kn">import</span> <span class="n">nnx</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">jaxrts</span>
+
+<span class="n">ureg</span> <span class="o">=</span> <span class="n">jaxrts</span><span class="o">.</span><span class="n">ureg</span>
+
+
+<div class="viewcode-block" id="NNModel">
+<a class="viewcode-back" href="../../../_autosummary/jaxrts.experimental.SiiNN.NNModel.html#jaxrts.experimental.SiiNN.NNModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NNModel</span><span class="p">(</span><span class="n">nnx</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class inheriting from :py:class:`nnx.Module`, adding quality of life</span>
+<span class="sd">    features and defining normalization features for the input of the NN.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NNModel.__init__">
+<a class="viewcode-back" href="../../../_autosummary/jaxrts.experimental.SiiNN.NNModel.__init__.html#jaxrts.experimental.SiiNN.NNModel.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">din</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">dhid</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">dout</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">rngs</span><span class="p">:</span> <span class="n">nnx</span><span class="o">.</span><span class="n">Rngs</span><span class="p">,</span>
+        <span class="n">no_of_atoms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the network as a set of fully connected</span>
+<span class="sd">        :py:class:`flax.nnx.Linear` layers.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        din: int</span>
+<span class="sd">            Number of input nodes. For a typical setup, this should be ``3 +</span>
+<span class="sd">            no_of_atoms``.</span>
+<span class="sd">        dhid: list[int]</span>
+<span class="sd">            List of integers, containing the size of each hidden layer.</span>
+<span class="sd">        dout: int</span>
+<span class="sd">            Number of output nodes. Typically, this is</span>
+<span class="sd">            ``no_of_ions * (no_of_ions + 1)/2``.</span>
+<span class="sd">        rngs: nnx.Rngs</span>
+<span class="sd">            A random number generator.</span>
+<span class="sd">        no_of_atoms: int or None, defaults to None</span>
+<span class="sd">            Number of species in the plasma. If this value is not given,</span>
+<span class="sd">            explicitly, it is calculated from :py:attr:`din` as ``din - 3``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">no_of_atoms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">no_of_atoms</span> <span class="o">=</span> <span class="n">din</span> <span class="o">-</span> <span class="mi">3</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span> <span class="o">=</span> <span class="n">no_of_atoms</span>
+
+        <span class="n">linears</span> <span class="o">=</span> <span class="p">[</span><span class="n">nnx</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">din</span><span class="p">,</span> <span class="n">dhid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rngs</span><span class="o">=</span><span class="n">rngs</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dhid</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">linears</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nnx</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dhid</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dhid</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">rngs</span><span class="o">=</span><span class="n">rngs</span><span class="p">))</span>
+        <span class="n">linears</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nnx</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dhid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dout</span><span class="p">,</span> <span class="n">rngs</span><span class="o">=</span><span class="n">rngs</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linears</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">linears</span><span class="p">)</span>
+
+        <span class="c1"># These are the values with which we norm the quantities for the input</span>
+        <span class="c1"># layer of the model.</span>
+        <span class="c1"># We store them here to be able to obtain physical quantities from</span>
+        <span class="c1"># scaled ones. For starters, set all values to unity. When the training</span>
+        <span class="c1"># data is defined, replace these values.</span>
+        <span class="c1">#: Normalization for T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_T</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="c1">#: Normalization for rho.</span>
+        <span class="c1">#: This is given as a float, as quantities would be in conflict with</span>
+        <span class="c1">#: flax. The unit is g/cm³</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_rho</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="c1">#: Normalization the ionization (this is an array with one entry for</span>
+        <span class="c1">#: each component.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_Z</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">Variable</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span><span class="p">)</span>
+        <span class="c1">#: Normalization for k in units inverse angström</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_k</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span></div>
+
+
+    <span class="nd">@nnx</span><span class="o">.</span><span class="n">jit</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">lin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">lin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">silu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+<div class="viewcode-block" id="NNModel.set_norms">
+<a class="viewcode-back" href="../../../_autosummary/jaxrts.experimental.SiiNN.NNModel.set_norms.html#jaxrts.experimental.SiiNN.NNModel.set_norms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_norms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rho</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the normalization of the input layers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_T</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_rho</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_Z</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_k</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">k</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">norms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">nnx</span><span class="o">.</span><span class="n">Variable</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the input layer normalizations as a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_T</span><span class="p">,</span>
+            <span class="s2">&quot;rho&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_rho</span><span class="p">,</span>
+            <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_Z</span><span class="p">,</span>
+            <span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_k</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">din</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shape of the input layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">in_features</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dhid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shape of the hidden layers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">layer</span><span class="o">.</span><span class="n">in_features</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shape of the output layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">out_features</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shape of the full model (input, hidden, and output layers).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">din</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dhid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dout</span></div>
+
+
+
+<div class="viewcode-block" id="NNModelExpandedZ">
+<a class="viewcode-back" href="../../../_autosummary/jaxrts.experimental.SiiNN.NNModelExpandedZ.html#jaxrts.experimental.SiiNN.NNModelExpandedZ">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NNModelExpandedZ</span><span class="p">(</span><span class="n">NNModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extension of :py:class:`NNModel` that augments the input representation of</span>
+<span class="sd">    the ionization state in order to better capture discontinuities occurring</span>
+<span class="sd">    at integer ionization values.</span>
+
+<span class="sd">    In expanded plasma states, the Sii output exhibits a discontinuity when the</span>
+<span class="sd">    ionization state approaches an integer value. Standard fully connected</span>
+<span class="sd">    networks struggle to approximate such behaviour because they implicitly</span>
+<span class="sd">    assume smooth mappings between inputs and outputs.</span>
+
+<span class="sd">    To mitigate this issue, the ionization input ``Z_i`` is transformed into</span>
+<span class="sd">    two components:</span>
+
+<span class="sd">    * the integer ionization stage</span>
+<span class="sd">      :math:`n_i = \\lfloor Z_i^{phys} \\rfloor`</span>
+<span class="sd">    * the fractional coordinate within that stage</span>
+<span class="sd">      :math:`\\phi_i = Z_i^{phys} - n_i`</span>
+
+<span class="sd">    where</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        Z_i^{phys} = Z_i \\cdot \\mathrm{norm\\_Z}_i</span>
+
+<span class="sd">    is the ionization value in physical units.</span>
+
+<span class="sd">    This transformation allows the neural network to learn</span>
+
+<span class="sd">    * smooth behaviour within each ionization stage</span>
+<span class="sd">    * discontinuous transitions between stages</span>
+
+<span class="sd">    while keeping the underlying architecture identical to</span>
+<span class="sd">    :py:class:`NNModel`.</span>
+
+<span class="sd">    The behaviour of S_ab(k) for an expanded and non-expanded</span>
+<span class="sd">    carbon dataset is shown below, highlighting the dicontinuity</span>
+<span class="sd">    at integer ionization values.</span>
+
+<span class="sd">    .. image:: ../images/NN_comparison_expanded_vs_non_expanded_dataset.svg</span>
+<span class="sd">       :width: 600</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NNModelExpandedZ.__init__">
+<a class="viewcode-back" href="../../../_autosummary/jaxrts.experimental.SiiNN.NNModelExpandedZ.__init__.html#jaxrts.experimental.SiiNN.NNModelExpandedZ.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">din</span><span class="p">,</span> <span class="n">dhid</span><span class="p">,</span> <span class="n">dout</span><span class="p">,</span> <span class="n">rngs</span><span class="p">,</span> <span class="n">no_of_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct an expanded neural network model.</span>
+
+<span class="sd">        The dimensionality of the first layer is increased because each</span>
+<span class="sd">        ionization variable ``Z_i`` is replaced by two features: its</span>
+<span class="sd">        integer ionization stage and its fractional coordinate within</span>
+<span class="sd">        that stage.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        din : int</span>
+<span class="sd">            Number of input nodes in the original model.</span>
+<span class="sd">        dhid : list[int]</span>
+<span class="sd">            List containing the number of neurons in each hidden layer.</span>
+<span class="sd">        dout : int</span>
+<span class="sd">            Number of output nodes.</span>
+<span class="sd">        rngs : nnx.Rngs</span>
+<span class="sd">            Random number generator used for parameter initialization.</span>
+<span class="sd">        no_of_atoms : int or None, optional</span>
+<span class="sd">            Number of ion species in the plasma. If not given, this</span>
+<span class="sd">            quantity is inferred from ``din`` as ``din - 3``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">din</span><span class="p">,</span> <span class="n">dhid</span><span class="p">,</span> <span class="n">dout</span><span class="p">,</span> <span class="n">rngs</span><span class="p">,</span> <span class="n">no_of_atoms</span><span class="p">)</span>
+
+        <span class="c1"># The first layer is inflated, because we split Z into two components,</span>
+        <span class="c1"># the integer part and the rest</span>
+        <span class="n">transformed_din</span> <span class="o">=</span> <span class="n">din</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">transformed_din</span><span class="p">,</span> <span class="n">dhid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rngs</span><span class="o">=</span><span class="n">rngs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NNModelExpandedZ.expand_Z_features">
+<a class="viewcode-back" href="../../../_autosummary/jaxrts.experimental.SiiNN.NNModelExpandedZ.expand_Z_features.html#jaxrts.experimental.SiiNN.NNModelExpandedZ.expand_Z_features">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">expand_Z_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Expand the ionization features of the input tensor.</span>
+
+<span class="sd">        Each normalized ionization value ``Z_i`` is transformed into two</span>
+<span class="sd">        quantities representing the ionization stage and the local</span>
+<span class="sd">        coordinate within that stage.</span>
+
+<span class="sd">        The transformation is defined as</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            Z_i^{phys} = Z_i \\cdot \\mathrm{norm\\_Z}_i</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            n_i = \\lfloor Z_i^{phys} \\rfloor</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \\phi_i = Z_i^{phys} - n_i</span>
+
+<span class="sd">        where ``norm_Z`` denotes the normalization factor stored in the</span>
+<span class="sd">        model.</span>
+
+<span class="sd">        The returned feature vector replaces the original ``Z_i`` inputs</span>
+<span class="sd">        with ``(φ_i, n_i)`` while leaving the remaining input parameters</span>
+<span class="sd">        unchanged.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : jax.Array</span>
+<span class="sd">            Input tensor containing the normalized network inputs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        jax.Array</span>
+<span class="sd">            Transformed input tensor with expanded ionization features.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># split input</span>
+        <span class="n">smooth_left</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span> <span class="p">:</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span><span class="p">]</span>
+        <span class="n">smooth_right</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span> <span class="p">:]</span>
+
+        <span class="n">norm_Z</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">norm_Z</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="c1"># convert to physical Z</span>
+        <span class="n">Z_phys</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">*</span> <span class="n">norm_Z</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">Z_phys</span><span class="p">)</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">Z_phys</span> <span class="o">-</span> <span class="n">n</span>
+
+        <span class="c1"># concatenate new features</span>
+        <span class="n">x_new</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">smooth_left</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">smooth_right</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x_new</span></div>
+
+
+    <span class="nd">@nnx</span><span class="o">.</span><span class="n">jit</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expand_Z_features</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">din</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Effective input dimensionality of the original model.</span>
+
+<span class="sd">        Because the expanded representation replaces each ionization</span>
+<span class="sd">        variable with two derived features, the internal dimensionality</span>
+<span class="sd">        of the first layer is larger than the logical input dimension.</span>
+<span class="sd">        This property returns the original input size expected by the</span>
+<span class="sd">        user-facing interface.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Number of logical input features before ionization expansion.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">in_features</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span></div>
+
+
+
+<span class="n">sharding</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">sharding</span><span class="o">.</span><span class="n">NamedSharding</span><span class="p">(</span>
+    <span class="n">jax</span><span class="o">.</span><span class="n">sharding</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">devices</span><span class="p">(),</span> <span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,)),</span>
+    <span class="n">jax</span><span class="o">.</span><span class="n">sharding</span><span class="o">.</span><span class="n">PartitionSpec</span><span class="p">(),</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="set_sharding">
+<a class="viewcode-back" href="../../../_autosummary/jaxrts.experimental.SiiNN.set_sharding.html#jaxrts.experimental.SiiNN.set_sharding">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_sharding</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">ShapeDtypeStruct</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jax</span><span class="o">.</span><span class="n">ShapeDtypeStruct</span><span class="p">:</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sharding</span><span class="o">=</span><span class="n">sharding</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span></div>
+
+
+
+<div class="viewcode-block" id="NNSiiModel">
+<a class="viewcode-back" href="../../../_autosummary/jaxrts.experimental.SiiNN.NNSiiModel.html#jaxrts.experimental.SiiNN.NNSiiModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NNSiiModel</span><span class="p">(</span><span class="n">jaxrts</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">IonFeatModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A :py:class:`jaxrts.model.IonFeatModel` to use a neural network to obtain</span>
+<span class="sd">    ion-ion static structure factors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NNSiiModel.__init__">
+<a class="viewcode-back" href="../../../_autosummary/jaxrts.experimental.SiiNN.NNSiiModel.__init__.html#jaxrts.experimental.SiiNN.NNSiiModel.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the NNSiiModel.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        checkpoint_dir : Path</span>
+<span class="sd">            The Path to the checkpoint directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># This requires that the network shape was saved in the checkpoint</span>
+        <span class="c1"># directory. This is done in a slightly hacky way, see the train.py</span>
+        <span class="c1"># file.</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">checkpoint_dir</span> <span class="o">/</span> <span class="s2">&quot;SHAPE&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">shape</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;rngs&quot;</span><span class="p">:</span> <span class="n">nnx</span><span class="o">.</span><span class="n">Rngs</span><span class="p">(</span><span class="mi">0</span><span class="p">)})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_elements</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;elements&quot;</span><span class="p">)</span>
+
+        <span class="n">expanded</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;expanded&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">expanded</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">NNModelExpandedZ</span><span class="p">(</span><span class="o">**</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">NNModel</span><span class="p">(</span><span class="o">**</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="n">abstract_model</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">eval_shape</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">model</span><span class="p">)</span>
+
+        <span class="n">graphdef</span><span class="p">,</span> <span class="n">abstract_state</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+            <span class="n">abstract_model</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">ckptr</span> <span class="o">=</span> <span class="n">ocp</span><span class="o">.</span><span class="n">AsyncCheckpointer</span><span class="p">(</span><span class="n">ocp</span><span class="o">.</span><span class="n">StandardCheckpointHandler</span><span class="p">())</span>
+
+        <span class="n">change_sharding_abstract_state</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span>
+            <span class="n">set_sharding</span><span class="p">,</span> <span class="n">abstract_state</span>
+        <span class="p">)</span>
+
+        <span class="n">model_state</span> <span class="o">=</span> <span class="n">ckptr</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span>
+            <span class="n">checkpoint_dir</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="n">ocp</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">StandardRestore</span><span class="p">(</span><span class="n">change_sharding_abstract_state</span><span class="p">),</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">abstract_state</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">graphdef</span> <span class="o">=</span> <span class="n">graphdef</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_state</span> <span class="o">=</span> <span class="n">model_state</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="NNSiiModel.S_ii">
+<a class="viewcode-back" href="../../../_autosummary/jaxrts.experimental.SiiNN.NNSiiModel.S_ii.html#jaxrts.experimental.SiiNN.NNSiiModel.S_ii">[docs]</a>
+    <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">S_ii</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">plasma_state</span><span class="p">:</span> <span class="n">jaxrts</span><span class="o">.</span><span class="n">PlasmaState</span><span class="p">,</span>
+        <span class="n">setup</span><span class="p">:</span> <span class="n">jaxrts</span><span class="o">.</span><span class="n">Setup</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+
+        <span class="c1"># This has to be done within a jax.jitted function.</span>
+        <span class="n">nn_model</span> <span class="o">=</span> <span class="n">nnx</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphdef</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_state</span><span class="p">)</span>
+
+        <span class="n">T</span> <span class="o">=</span> <span class="p">(</span><span class="n">plasma_state</span><span class="o">.</span><span class="n">T_e</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">k_B</span><span class="p">)</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="n">ureg</span><span class="o">.</span><span class="n">eV</span><span class="p">)</span>
+
+        <span class="c1"># Get the elements of the model and catch expanded ionization state</span>
+        <span class="c1"># with unique elements:</span>
+
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">jaxrts</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_elements</span><span class="p">]</span>
+        <span class="n">unique_elements</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">elements</span><span class="p">))</span>
+
+        <span class="c1"># assign idices to later match order of elements in plasma state</span>
+        <span class="n">idx_arr</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">plasma_state</span><span class="o">.</span><span class="n">ions</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">elem</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">unique_elements</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_elements</span><span class="p">)</span>
+
+        <span class="c1"># Norm the inputs to the NN</span>
+        <span class="n">Z_arr</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">n_arr</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idx_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">Z_arr</span> <span class="o">=</span> <span class="n">Z_arr</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                    <span class="n">plasma_state</span><span class="o">.</span><span class="n">number_fraction</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                    <span class="o">*</span> <span class="n">plasma_state</span><span class="o">.</span><span class="n">Z_free</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">n_arr</span> <span class="o">=</span> <span class="n">n_arr</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">plasma_state</span><span class="o">.</span><span class="n">number_fraction</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+
+            <span class="n">Z_arr</span> <span class="o">=</span> <span class="n">Z_arr</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">Z_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">n_arr</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># create input array to the Neural Net</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">T</span> <span class="o">/</span> <span class="n">nn_model</span><span class="o">.</span><span class="n">norm_T</span><span class="p">,</span>
+                <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                    <span class="n">plasma_state</span><span class="o">.</span><span class="n">mass_density</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span>
+                        <span class="n">ureg</span><span class="o">.</span><span class="n">gram</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">centimeter</span><span class="o">**</span><span class="mi">3</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="o">/</span> <span class="n">nn_model</span><span class="o">.</span><span class="n">norm_rho</span><span class="p">,</span>
+                <span class="o">*</span><span class="p">(</span><span class="n">Z_arr</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nn_model</span><span class="o">.</span><span class="n">norm_Z</span><span class="p">)),</span>
+                <span class="p">(</span><span class="n">setup</span><span class="o">.</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">angstrom</span><span class="p">)</span> <span class="o">/</span> <span class="n">nn_model</span><span class="o">.</span><span class="n">norm_k</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">Sii</span> <span class="o">=</span> <span class="n">nn_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># Create output array, S_base, adaptive for N components</span>
+        <span class="c1"># for 4 components it looks like</span>
+        <span class="c1"># S_base = jnp.array(</span>
+        <span class="c1">#     [</span>
+        <span class="c1">#         [Sii[0], Sii[1], Sii[2], Sii[3]],</span>
+        <span class="c1">#         [Sii[1], Sii[4], Sii[5], Sii[6]],</span>
+        <span class="c1">#         [Sii[2], Sii[5], Sii[7], Sii[8]],</span>
+        <span class="c1">#         [Sii[3], Sii[6], Sii[8], Sii[9]],</span>
+        <span class="c1">#     ]</span>
+        <span class="c1"># )</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+        <span class="n">iu</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">triu_indices</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="n">S_base</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Sii</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">S_base</span> <span class="o">=</span> <span class="n">S_base</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">iu</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">Sii</span><span class="p">)</span>
+        <span class="n">S_base</span> <span class="o">=</span> <span class="n">S_base</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">S_base</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="c1"># Determine permutation order based on ion order of plasma_state</span>
+        <span class="n">perm</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">idx_arr</span><span class="p">:</span>
+            <span class="n">perm</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">perm</span><span class="p">,</span> <span class="o">*</span><span class="n">entry</span><span class="p">]</span>
+        <span class="n">perm</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span>
+
+        <span class="c1"># Apply the permutation to S_base to capture wronge order of plasma</span>
+        <span class="c1"># state elements</span>
+        <span class="c1"># compared to order of elements used to train the NN,</span>
+        <span class="c1"># e.g. Plasma_state element list = [&quot;C&quot;,&quot;H&quot;] but NN element list</span>
+        <span class="c1"># =[&quot;H&quot;,&quot;C&quot;]</span>
+        <span class="c1"># would result in wrong Sii values set for the elements</span>
+        <span class="n">S_out</span> <span class="o">=</span> <span class="n">S_base</span><span class="p">[</span><span class="n">perm</span><span class="p">][:,</span> <span class="n">perm</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">S_out</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">dimensionless</span></div>
+
+
+    <span class="c1"># The following is required to jit a Model</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_tree_flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphdef</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_state</span><span class="p">)</span>
+        <span class="n">aux_data</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_elements</span><span class="p">)</span>  <span class="c1"># static values</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">children</span><span class="p">,</span> <span class="n">aux_data</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_tree_unflatten</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">aux_data</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">model_key</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">model_elements</span><span class="p">)</span> <span class="o">=</span> <span class="n">aux_data</span>
+        <span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">graphdef</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">model_state</span><span class="p">)</span> <span class="o">=</span> <span class="n">children</span>
+        <span class="k">return</span> <span class="n">obj</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sort_func</span><span class="p">(</span><span class="n">ion</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ion</span><span class="o">.</span><span class="n">symbol</span>
+
+
+<span class="n">_models</span> <span class="o">=</span> <span class="p">[</span><span class="n">NNSiiModel</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">_m</span> <span class="ow">in</span> <span class="n">_models</span><span class="p">:</span>
+    <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">register_pytree_node</span><span class="p">(</span>
+        <span class="n">_m</span><span class="p">,</span>
+        <span class="n">_m</span><span class="o">.</span><span class="n">_tree_flatten</span><span class="p">,</span>
+        <span class="n">_m</span><span class="o">.</span><span class="n">_tree_unflatten</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2025, J. Lütgert, S. Schumacher, and the jaxrts contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
