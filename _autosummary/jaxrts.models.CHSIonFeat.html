@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
@@ -6,24 +8,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>jaxrts.models.CHSIonFeat &mdash; jaxrts  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=cf11be94" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -65,6 +64,7 @@
 <li class="toctree-l4"><a class="reference internal" href="jaxrts.models.FixedSii.html">jaxrts.models.FixedSii</a></li>
 <li class="toctree-l4"><a class="reference internal" href="jaxrts.models.Gregori2003IonFeat.html">jaxrts.models.Gregori2003IonFeat</a></li>
 <li class="toctree-l4"><a class="reference internal" href="jaxrts.models.Gregori2006IonFeat.html">jaxrts.models.Gregori2006IonFeat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jaxrts.models.GridInterpolationSii.html">jaxrts.models.GridInterpolationSii</a></li>
 <li class="toctree-l4"><a class="reference internal" href="jaxrts.models.Neglect.html">jaxrts.models.Neglect</a></li>
 <li class="toctree-l4"><a class="reference internal" href="jaxrts.models.OnePotentialHNCIonFeat.html">jaxrts.models.OnePotentialHNCIonFeat</a></li>
 <li class="toctree-l4"><a class="reference internal" href="jaxrts.models.PeakCollection.html">jaxrts.models.PeakCollection</a></li>
@@ -134,7 +134,7 @@
 <h1>jaxrts.models.CHSIonFeat<a class="headerlink" href="#jaxrts-models-chsionfeat" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="jaxrts.models.CHSIonFeat">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">jaxrts.models.</span></span><span class="sig-name descname"><span class="pre">CHSIonFeat</span></span><a class="reference internal" href="../_modules/jaxrts/models.html#CHSIonFeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jaxrts.models.CHSIonFeat" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">jaxrts.models.</span></span><span class="sig-name descname"><span class="pre">CHSIonFeat</span></span><a class="reference internal" href="../_modules/jaxrts/models.html#CHSIonFeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jaxrts.models.CHSIonFeat" title="Link to this definition"></a></dt>
 <dd><p>Model for the ion feature of the scattering, presented in
 <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../bibliography.html#id49" title="G. Gregori, A. Ravasio, A. Höll, S.H. Glenzer, and S.J. Rose. Derivation of the static structure factor in strongly coupled non-equilibrium plasmas for x-ray scattering studies. High Energy Density Physics, 3:99–108, 5 2007. doi:10.1016/j.hedp.2007.02.006.">Gregori et al., 2007</a>]</span>. Treating the ions as charged hard spheres (CHS).</p>
 <div class="admonition note">
@@ -149,12 +149,12 @@ model.</p>
 </div>
 <p>Requires a ‘Debye temperature’ model (defaults to <a class="reference internal" href="jaxrts.models.BohmStaver.html#jaxrts.models.BohmStaver" title="jaxrts.models.BohmStaver"><code class="xref py py-class docutils literal notranslate"><span class="pre">BohmStaver</span></code></a>).</p>
 <p>Extension to multicomponent plasmas is taken from <span class="bibtex-citation" id="id3">[<a class="reference internal" href="../bibliography.html#id48" title="G. Gregori, S.H. Glenzer, H.-K. Chung, D.H. Froula, R.W. Lee, N.B. Meezan, J.D. Moody, C. Niemann, O.L. Landen, B. Holst, R. Redmer, S.P. Regan, and H. Sawada. Measurement of carbon ionization balance in high-temperature plasma mixtures by temporally resolved x-ray scattering. Journal of Quantitative Spectroscopy and Radiative Transfer, 99:225–237, 5 2006. doi:10.1016/j.jqsrt.2005.05.017.">Gregori et al., 2006b</a>]</span>:</p>
-<p>It is only valid in RPA, see, e.g., <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../bibliography.html#id106" title="K. Wünsch, J. Vorberger, G. Gregori, and D. O. Gericke. X-ray scattering as a probe for warm dense mixtures and high-pressure miscibility. EPL (Europhysics Letters), 94(2):25001, 4 2011. doi:10.1209/0295-5075/94/25001.">Wünsch et al., 2011</a>]</span>.</p>
+<p>It is only valid in RPA, see, e.g., <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../bibliography.html#id107" title="K. Wünsch, J. Vorberger, G. Gregori, and D. O. Gericke. X-ray scattering as a probe for warm dense mixtures and high-pressure miscibility. EPL (Europhysics Letters), 94(2):25001, 4 2011. doi:10.1209/0295-5075/94/25001.">Wünsch et al., 2011</a>]</span>.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.models.CHSIonFeat.Rayleigh_weight.html#jaxrts.models.CHSIonFeat.Rayleigh_weight" title="jaxrts.models.CHSIonFeat.Rayleigh_weight"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Rayleigh_weight</span></code></a>(plasma_state, setup)</p></td>
-<td><p>This is the result from Wünsch <span class="bibtex-citation" id="id5">[<a class="reference internal" href="../bibliography.html#id105" title="Kathrin Wünsch. Theory of X-ray Thomson scattering in warm dense matter. PhD thesis, University of Warwick, Warwick, 2011.">Wünsch, 2011</a>]</span>, to calculate the Rayleigh weight for a plasma from multiple species.</p></td>
+<td><p>This is the result from Wünsch <span class="bibtex-citation" id="id5">[<a class="reference internal" href="../bibliography.html#id106" title="Kathrin Wünsch. Theory of X-ray Thomson scattering in warm dense matter. PhD thesis, University of Warwick, Warwick, 2011.">Wünsch, 2011</a>]</span>, to calculate the Rayleigh weight for a plasma from multiple species.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="jaxrts.models.CHSIonFeat.S_ii.html#jaxrts.models.CHSIonFeat.S_ii" title="jaxrts.models.CHSIonFeat.S_ii"><code class="xref py py-obj docutils literal notranslate"><span class="pre">S_ii</span></code></a>(plasma_state, setup)</p></td>
 <td><p></p></td>

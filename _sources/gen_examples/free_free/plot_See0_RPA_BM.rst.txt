@@ -11,7 +11,7 @@
         :class: sphx-glr-download-link-note
 
         :ref:`Go to the end <sphx_glr_download_gen_examples_free_free_plot_See0_RPA_BM.py>`
-        to download the full example code
+        to download the full example code.
 
 .. rst-class:: sphx-glr-example-title
 
@@ -50,18 +50,18 @@ module.
 
  .. code-block:: none
 
-    RPA: 1.345108985900879
-    BMA: 6.530456304550171
-    BMA Chapman Interp: 9.325779914855957
-    RPA With damping: 1.6307275295257568
-    RPA: 0.00044846534729003906
-    BMA: 5.731716156005859
-    BMA Chapman Interp: 7.26680326461792
-    RPA With damping: 0.0006880760192871094
-    RPA: 0.0004322528839111328
-    BMA: 5.885344982147217
-    BMA Chapman Interp: 7.1672444343566895
-    RPA With damping: 0.0005359649658203125
+    RPA: 1.7343692779541016
+    BMA: 9.13188910484314
+    BMA Chapman Interp: 15.20794677734375
+    RPA With damping: 2.308079957962036
+    RPA: 0.0003669261932373047
+    BMA: 8.913902282714844
+    BMA Chapman Interp: 11.653363227844238
+    RPA With damping: 0.0004839897155761719
+    RPA: 0.0003254413604736328
+    BMA: 8.61732530593872
+    BMA Chapman Interp: 11.2221360206604
+    RPA With damping: 0.00052642822265625
 
 
 
@@ -248,7 +248,7 @@ module.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 47.962 seconds)
+   **Total running time of the script:** (1 minutes 11.046 seconds)
 
 
 .. _sphx_glr_download_gen_examples_free_free_plot_See0_RPA_BM.py:
@@ -264,6 +264,10 @@ module.
     .. container:: sphx-glr-download sphx-glr-download-python
 
       :download:`Download Python source code: plot_See0_RPA_BM.py <plot_See0_RPA_BM.py>`
+
+    .. container:: sphx-glr-download sphx-glr-download-zip
+
+      :download:`Download zipped: plot_See0_RPA_BM.zip <plot_See0_RPA_BM.zip>`
 
 
 .. only:: html

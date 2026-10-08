@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
@@ -6,23 +8,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>jaxrts.plasmastate.PlasmaState &mdash; jaxrts  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=cf11be94" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -88,6 +87,7 @@
 <li class="toctree-l3"><a class="reference internal" href="jaxrts.setup.html">jaxrts.setup</a></li>
 <li class="toctree-l3"><a class="reference internal" href="jaxrts.static_structure_factors.html">jaxrts.static_structure_factors</a></li>
 <li class="toctree-l3"><a class="reference internal" href="jaxrts.units.html">jaxrts.units</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaxrts.weissker_interpolator.html">jaxrts.weissker_interpolator</a></li>
 </ul>
 </li>
 </ul>
@@ -130,7 +130,7 @@
 <h1>jaxrts.plasmastate.PlasmaState<a class="headerlink" href="#jaxrts-plasmastate-plasmastate" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="jaxrts.plasmastate.PlasmaState">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">jaxrts.plasmastate.</span></span><span class="sig-name descname"><span class="pre">PlasmaState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="jaxrts.elements.Element.html#jaxrts.elements.Element" title="jaxrts.elements.Element"><span class="pre">Element</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_free</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Quantity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_density</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Quantity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Quantity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jaxrts/plasmastate.html#PlasmaState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jaxrts.plasmastate.PlasmaState" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">jaxrts.plasmastate.</span></span><span class="sig-name descname"><span class="pre">PlasmaState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="jaxrts.elements.Element.html#jaxrts.elements.Element" title="jaxrts.elements.Element"><span class="pre">Element</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_free</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Quantity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_density</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Quantity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Quantity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jaxrts/plasmastate.html#PlasmaState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jaxrts.plasmastate.PlasmaState" title="Link to this definition"></a></dt>
 <dd><p>Define a plasma. The <a class="reference internal" href="#jaxrts.plasmastate.PlasmaState" title="jaxrts.plasmastate.PlasmaState"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlasmaState</span></code></a> is defined by the set of
 state parameters, which are attributes of this object and have to be set
 during initialization:</p>
@@ -153,7 +153,7 @@ certain aspects of a plasa state, i.e., the ionization potential depression
 model, or the description of free-free scattering. To attach such a Models
 instance to a <a class="reference internal" href="#jaxrts.plasmastate.PlasmaState" title="jaxrts.plasmastate.PlasmaState"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlasmaState</span></code></a>, assign it to a key that is valid
 for the specific <a class="reference internal" href="jaxrts.models.Model.html#jaxrts.models.Model" title="jaxrts.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">jaxrts.models.Model</span></code></a>, e.g.,</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;free-free scattering&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jaxrts</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">RPA</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="p">[</span><span class="s2">"free-free scattering"</span><span class="p">]</span> <span class="o">=</span> <span class="n">jaxrts</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">RPA</span><span class="p">()</span>
 </pre></div>
 </div>
 <p class="rubric">Methods</p>
@@ -191,58 +191,61 @@ for the specific <a class="reference internal" href="jaxrts.models.Model.html#ja
 <tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.T_F.html#jaxrts.plasmastate.PlasmaState.T_F" title="jaxrts.plasmastate.PlasmaState.T_F"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T_F</span></code></a></p></td>
 <td><p>Return the fermi temperature of the free electron system, determined by the electron density.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.Teff_e.html#jaxrts.plasmastate.PlasmaState.Teff_e" title="jaxrts.plasmastate.PlasmaState.Teff_e"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Teff_e</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.T_ratio.html#jaxrts.plasmastate.PlasmaState.T_ratio" title="jaxrts.plasmastate.PlasmaState.T_ratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T_ratio</span></code></a></p></td>
+<td><p>Ratio of ion- to electron temperature</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.Teff_e.html#jaxrts.plasmastate.PlasmaState.Teff_e" title="jaxrts.plasmastate.PlasmaState.Teff_e"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Teff_e</span></code></a></p></td>
 <td><p>Return the effective electron temperature.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.Z_A.html#jaxrts.plasmastate.PlasmaState.Z_A" title="jaxrts.plasmastate.PlasmaState.Z_A"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z_A</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.Z_A.html#jaxrts.plasmastate.PlasmaState.Z_A" title="jaxrts.plasmastate.PlasmaState.Z_A"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z_A</span></code></a></p></td>
 <td><p>The atomic number of the atom-species.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.Z_core.html#jaxrts.plasmastate.PlasmaState.Z_core" title="jaxrts.plasmastate.PlasmaState.Z_core"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z_core</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.Z_core.html#jaxrts.plasmastate.PlasmaState.Z_core" title="jaxrts.plasmastate.PlasmaState.Z_core"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z_core</span></code></a></p></td>
 <td><p>The number of electrons still bound to the ion.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.atomic_masses.html#jaxrts.plasmastate.PlasmaState.atomic_masses" title="jaxrts.plasmastate.PlasmaState.atomic_masses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_masses</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.atomic_masses.html#jaxrts.plasmastate.PlasmaState.atomic_masses" title="jaxrts.plasmastate.PlasmaState.atomic_masses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_masses</span></code></a></p></td>
 <td><p>The atomic weight of the atoms.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.degeneracy_param.html#jaxrts.plasmastate.PlasmaState.degeneracy_param" title="jaxrts.plasmastate.PlasmaState.degeneracy_param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">degeneracy_param</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.degeneracy_param.html#jaxrts.plasmastate.PlasmaState.degeneracy_param" title="jaxrts.plasmastate.PlasmaState.degeneracy_param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">degeneracy_param</span></code></a></p></td>
 <td><p>Return the degree of degeneracy of the electrons.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.ee_coupling.html#jaxrts.plasmastate.PlasmaState.ee_coupling" title="jaxrts.plasmastate.PlasmaState.ee_coupling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ee_coupling</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.ee_coupling.html#jaxrts.plasmastate.PlasmaState.ee_coupling" title="jaxrts.plasmastate.PlasmaState.ee_coupling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ee_coupling</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.ion_core_radius.html#jaxrts.plasmastate.PlasmaState.ion_core_radius" title="jaxrts.plasmastate.PlasmaState.ion_core_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ion_core_radius</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.ion_core_radius.html#jaxrts.plasmastate.PlasmaState.ion_core_radius" title="jaxrts.plasmastate.PlasmaState.ion_core_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ion_core_radius</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.mean_Z_A.html#jaxrts.plasmastate.PlasmaState.mean_Z_A" title="jaxrts.plasmastate.PlasmaState.mean_Z_A"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_Z_A</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.mean_Z_A.html#jaxrts.plasmastate.PlasmaState.mean_Z_A" title="jaxrts.plasmastate.PlasmaState.mean_Z_A"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_Z_A</span></code></a></p></td>
 <td><p>The mean atomic number.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.n_e.html#jaxrts.plasmastate.PlasmaState.n_e" title="jaxrts.plasmastate.PlasmaState.n_e"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_e</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.n_e.html#jaxrts.plasmastate.PlasmaState.n_e" title="jaxrts.plasmastate.PlasmaState.n_e"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_e</span></code></a></p></td>
 <td><p>The free electron number density.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.n_i.html#jaxrts.plasmastate.PlasmaState.n_i" title="jaxrts.plasmastate.PlasmaState.n_i"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_i</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.n_i.html#jaxrts.plasmastate.PlasmaState.n_i" title="jaxrts.plasmastate.PlasmaState.n_i"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_i</span></code></a></p></td>
 <td><p>The ion number density.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.nions.html#jaxrts.plasmastate.PlasmaState.nions" title="jaxrts.plasmastate.PlasmaState.nions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nions</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.nions.html#jaxrts.plasmastate.PlasmaState.nions" title="jaxrts.plasmastate.PlasmaState.nions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nions</span></code></a></p></td>
 <td><p>The number of species in the plasma.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.number_fraction.html#jaxrts.plasmastate.PlasmaState.number_fraction" title="jaxrts.plasmastate.PlasmaState.number_fraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_fraction</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.number_fraction.html#jaxrts.plasmastate.PlasmaState.number_fraction" title="jaxrts.plasmastate.PlasmaState.number_fraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_fraction</span></code></a></p></td>
 <td><p>Return the number fraction of the elements.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.screening_length.html#jaxrts.plasmastate.PlasmaState.screening_length" title="jaxrts.plasmastate.PlasmaState.screening_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">screening_length</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.screening_length.html#jaxrts.plasmastate.PlasmaState.screening_length" title="jaxrts.plasmastate.PlasmaState.screening_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">screening_length</span></code></a></p></td>
 <td><p>This is a shortcut to just get the screening length, which is used, e.g., by the <a class="reference internal" href="jaxrts.hnc_potentials.DebyeHueckelPotential.html#jaxrts.hnc_potentials.DebyeHueckelPotential" title="jaxrts.hnc_potentials.DebyeHueckelPotential"><code class="xref py py-class docutils literal notranslate"><span class="pre">jaxrts.hnc_potentials.DebyeHueckelPotential</span></code></a>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.ions.html#jaxrts.plasmastate.PlasmaState.ions" title="jaxrts.plasmastate.PlasmaState.ions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ions</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.ions.html#jaxrts.plasmastate.PlasmaState.ions" title="jaxrts.plasmastate.PlasmaState.ions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ions</span></code></a></p></td>
 <td><p>A list of <a class="reference internal" href="jaxrts.elements.Element.html#jaxrts.elements.Element" title="jaxrts.elements.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">jaxrts.elements.Element</span></code></a> objects that define the constituents of the plasma.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.Z_free.html#jaxrts.plasmastate.PlasmaState.Z_free" title="jaxrts.plasmastate.PlasmaState.Z_free"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z_free</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.Z_free.html#jaxrts.plasmastate.PlasmaState.Z_free" title="jaxrts.plasmastate.PlasmaState.Z_free"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z_free</span></code></a></p></td>
 <td><p>A list of ionization states for each of the constituents.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.mass_density.html#jaxrts.plasmastate.PlasmaState.mass_density" title="jaxrts.plasmastate.PlasmaState.mass_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mass_density</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.mass_density.html#jaxrts.plasmastate.PlasmaState.mass_density" title="jaxrts.plasmastate.PlasmaState.mass_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mass_density</span></code></a></p></td>
 <td><p>A list of partial mass densities for the ions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.T_e.html#jaxrts.plasmastate.PlasmaState.T_e" title="jaxrts.plasmastate.PlasmaState.T_e"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T_e</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.T_e.html#jaxrts.plasmastate.PlasmaState.T_e" title="jaxrts.plasmastate.PlasmaState.T_e"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T_e</span></code></a></p></td>
 <td><p>The electronic temperature of the system.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.T_i.html#jaxrts.plasmastate.PlasmaState.T_i" title="jaxrts.plasmastate.PlasmaState.T_i"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T_i</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="jaxrts.plasmastate.PlasmaState.T_i.html#jaxrts.plasmastate.PlasmaState.T_i" title="jaxrts.plasmastate.PlasmaState.T_i"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T_i</span></code></a></p></td>
 <td><p>The ionic temperature of the system.</p></td>
 </tr>
 </tbody>
